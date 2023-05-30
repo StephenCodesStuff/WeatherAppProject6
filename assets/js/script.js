@@ -3,9 +3,10 @@ qInput = document.querySelector('#q')
 addedButton = document.querySelector('.added-city-button')
 searchedEl = document.querySelector('#searched-city')
 resultsContainer = document.querySelector('#results')
-
+fiveDayContainer = document.querySelector('#fiveDayContainer')
 var handleSearch = function(event) {
     event.preventDefault();
+    resultsContainer.innerHTML = null;
 
     var q=qInput.value.trim()
     console.log (q)
@@ -51,15 +52,23 @@ var handleSearch = function(event) {
             var humidity = data.main.humidity;
             var wind = data.wind.speed;
             var cityName = data.name;
-            console.log(temp)
-            console.log(humidity)
-            console.log(wind)
+            var date = data.dt*1000;
+            var formattedDate = dayjs(date).format("MMM D");
+            // var weatherIcon = weather.icon
+            var lon = data.coord.lon;
+            var lat = data.coord.lat;
+            var fivedayAPI = 'https://api.openweathermap.org/data/2.5/forecast?lat='+lat+'&lon='+lon+'&appid=e7ef61c6ce67516bc22001eacd3518fd&units=imperial'
+            console.log(fivedayAPI)
+            // console.log(temp);
+            // console.log(humidity);
+            // console.log(wind);
+            // console.log(lon, lat)
 
-            var cityHead = document.createElement('h3')
-            var weatherList = document.createElement('ul')
-            var displayTemp = document.createElement('li')
-            var displayWind = document.createElement('li')
-            var displayHumid= document.createElement('li')
+            var cityHead = document.createElement('h3');
+            var weatherList = document.createElement('ul');
+            var displayTemp = document.createElement('li');
+            var displayWind = document.createElement('li');
+            var displayHumid= document.createElement('li');
 
             cityHead.className = 'card-header m-3';
             weatherList.className = '';
@@ -67,7 +76,8 @@ var handleSearch = function(event) {
             displayTemp.className = 'list-group-item m-2 temp-display';
             displayWind.className = 'list-group-item m-2 wind-display';
 
-            cityHead.textContent = cityName + ' - Date + Emoji';
+            cityHead.textContent = cityName + ' - '+ formattedDate;
+            //figure out weather icon
             displayTemp.textContent = 'Temp: ' + temp + ' °F';
             displayWind.textContent = "Wind Speed: " + wind + ' MPH';
             displayHumid.textContent = 'Humidity: ' + humidity + '%';
@@ -79,6 +89,58 @@ var handleSearch = function(event) {
             resultsContainer.appendChild(weatherList);
             
             // searchedEl.textContent = cityName
+
+            return fetch(fivedayAPI)
+        })
+        .then(function(response){
+            return response.json();
+
+        })
+        .then(function(data){
+            console.log(data.list);
+            for (var i = 0; i < data.list.length; i+=8) {
+                console.log(data.list[i])
+                var date = data.list[i].dt * 1000
+                var formattedDate = dayjs(date).format("MMM D")
+                console.log (formattedDate)
+                var temp = data.list[i].main.temp;
+                var humid = data.list[i].main.humidity;
+                var wind = data.list[i].wind.speed;
+                console.log (temp , humid , wind)
+
+                // var header = document.createElement('h3');
+                var cardEl = document.createElement('div');
+                var cardHead= document.createElement('div')
+                var ulEl = document.createElement('ul')
+                var displayTemp = document.createElement('li');
+                var displayWind = document.createElement('li');
+                var displayHumid= document.createElement('li');
+
+                // header.className = 'h3';
+                cardEl.className = 'col-3 col-xl card m-2  fivedayCard';
+                cardEl.setAttribute('style', 'width: 18rem;' )
+                cardHead.className = 'card-header fivedayDate'
+                ulEl.className = 'list-group list-group-flush'
+                displayTemp.className = 'list-group-item fivedayTemp'
+                displayWind.className = 'list-group-item fivedayWind'
+                displayHumid.className = 'list-group-item fivedayHumidity'
+
+                // header.textContent = "5 - Day Forecast"
+                cardHead.textContent = formattedDate
+                displayTemp.textContent = 'Temp: ' + temp + ' °F';
+                displayWind.textContent = "Wind Speed: " + wind + ' MPH';
+                displayHumid.textContent = 'Humidity: ' + humid + '%';
+                
+                fiveDayContainer.appendChild(cardEl);
+                ulEl.appendChild(displayTemp);
+                ulEl.appendChild(displayWind);
+                ulEl.appendChild(displayHumid);
+
+                cardEl.appendChild(cardHead);
+                cardEl.appendChild(ulEl);
+                
+    
+            }
 
 
         })
