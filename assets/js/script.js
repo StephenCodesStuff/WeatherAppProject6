@@ -29,10 +29,10 @@ var handleSearchSubmit = function(event){
     var city = qInput.value.trim();
     console.log(city);
     handleSearch(city);
-    if(!city){
-        alert("Please enter a city")
-        return
-    } else {
+    // if(!city){
+    //     alert("Please enter a city")
+    //     return
+    // } else {
     addedButton = document.createElement('button')
     addedButton.className = 'btn btn-secondary m-2 added-city-button mb-3 '+ city;
     addedButton.setAttribute('type', 'click' )
