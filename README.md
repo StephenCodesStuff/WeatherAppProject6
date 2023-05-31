@@ -1,14 +1,12 @@
 # WeatherAppProject6
 
-Use insomnia
+Project title: Weather App
 
-get current weather data
+Description: For this project, I was tasked with creating a weather application that takes user input and fetches data from a third party api. 
 
-Use Geocoding to get lat and lon
 
-Tool for creating urls
-insomnia.rest
 
+The link the deployment page. https://stephencodesstuff.github.io/Project5ThirdPartyAPIs/
 APIs used
 https://openweathermap.org/current
 https://openweathermap.org/forecast5
