@@ -43,7 +43,7 @@ var handleSearchSubmit = function(event){
     localStorage.setItem("SearchedCities", JSON.stringify(searchArray));} 
 }
 //Find the city information and displays it
-var handleSearch = function(city) {
+handleSearch = function(city) {
     resultsContainer.innerHTML = null;
     fiveDayContainer.innerHTML = null;
     var q=city
