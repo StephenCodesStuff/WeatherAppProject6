@@ -29,10 +29,10 @@ var handleSearchSubmit = function(event){
     var city = qInput.value.trim();
     console.log(city);
     handleSearch(city);
-    // if(!city){
-    //     alert("Please enter a city")
-    //     return
-    // } else {
+    if(!city){
+        alert("Please enter a city")
+        return
+    } else {
     addedButton = document.createElement('button')
     addedButton.className = 'btn btn-secondary m-2 added-city-button mb-3 '+ city;
     addedButton.setAttribute('type', 'click' )
@@ -47,7 +47,7 @@ handleSearch = function(city) {
     resultsContainer.innerHTML = null;
     fiveDayContainer.innerHTML = null;
     var q=city
-    var geoAPI= 'http://api.openweathermap.org/geo/1.0/direct?q=' + q +',840&limit=1&appid=e7ef61c6ce67516bc22001eacd3518fd'
+    var geoAPI= 'https://api.openweathermap.org/geo/1.0/direct?q=' + q +',840&limit=1&appid=e7ef61c6ce67516bc22001eacd3518fd'
     fetch(geoAPI)
         .then(function(response) {
             
