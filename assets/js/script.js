@@ -1,31 +1,77 @@
-searchForm = document.querySelector('#search-form')
-qInput = document.querySelector('#q') 
-addedButton = document.querySelector('.added-city-button')
-searchedEl = document.querySelector('#searched-city')
-resultsContainer = document.querySelector('#results')
-fiveDayContainer = document.querySelector('#fiveDayContainer')
-var handleSearch = function(event) {
+var searchForm = document.querySelector('#search-form')
+var qInput = document.querySelector('#q') 
+var addedButton = document.querySelector('.added-city-button')
+var searchedEl = document.querySelector('#searched-city')
+var resultsContainer = document.querySelector('#results')
+var fiveDayContainer = document.querySelector('#fiveDayContainer')
+var searchHistory = document.querySelector('#search-history')
+var searchArray=[]
+var forcastHeader = document.querySelectorAll('.h3')
+
+startUp = function(){
+    searchArray = JSON.parse(localStorage.getItem("SearchedCities")) || [];
+    console.log(searchArray)
+    for (var i = 0; i < searchArray.length; i++){
+        addedButton = document.createElement('button')
+        addedButton.className = 'btn btn-secondary m-2 added-city-button mb-3';
+        addedButton.setAttribute('data', searchArray[i]);
+        addedButton.setAttribute('type', 'click' )
+        addedButton.textContent=searchArray[i];
+        searchHistory.appendChild(addedButton) 
+    }
+
+}
+
+var handleSearchSubmit = function(event){
+    
     event.preventDefault();
+    var city = qInput.value.trim();
+    console.log(city);
+    handleSearch(city);
+    if(!city){
+        alert("Please enter a city")
+        return
+    } else {
+    addedButton = document.createElement('button')
+    addedButton.className = 'btn btn-secondary m-2 added-city-button mb-3 '+ city;
+    addedButton.setAttribute('type', 'click' )
+    addedButton.setAttribute('data', city);
+    addedButton.textContent=city;
+    searchHistory.appendChild(addedButton)
+    searchArray.push(city)
+    localStorage.setItem("SearchedCities", JSON.stringify(searchArray));} 
+}
+var handleSearch = function(city) {
+  
+
+    // event.preventDefault();
     resultsContainer.innerHTML = null;
-
-    var q=qInput.value.trim()
-    console.log (q)
+    fiveDayContainer.innerHTML = null;
     
-    
-    
-    // searchedEl.textContent= q;
 
-    var geoAPI= 'http://api.openweathermap.org/geo/1.0/direct?q=' + q + '&limit=1&appid=e7ef61c6ce67516bc22001eacd3518fd'
-    var todayAPI = ""
+    // var q=qInput.value.trim()
+    var q=city
+    // console.log (q)
+    // addedButton = document.createElement('button')
+    // addedButton.className = 'btn btn-secondary m-2 added-city-button mb-3 '+ q;
+    // addedButton.setAttribute('type', 'click' )
+    // addedButton.setAttribute('data', q);
+    // addedButton.textContent=q;
+    // searchHistory.appendChild(addedButton)
+    // searchArray.push(q)
+    // localStorage.setItem("SearchedCities", JSON.stringify(searchArray))
 
-    console.log(geoAPI)
+    var geoAPI= 'http://api.openweathermap.org/geo/1.0/direct?q=' + q +',840&limit=1&appid=e7ef61c6ce67516bc22001eacd3518fd'
+
+    // console.log(geoAPI)
 
     fetch(geoAPI)
         .then(function(response) {
+            
             return response.json();
         })
         .then(function(data) {
-            console.log(data);
+            // console.log(data);
             for (var i = 0; i < data.length; i++) {
                 var result = data[i];
                 // console.log (result);
@@ -47,7 +93,7 @@ var handleSearch = function(event) {
 
         })
         .then(function(data) {
-            console.log(data.main.temp);
+            // console.log(data.main.temp);
             var temp = data.main.temp;
             var humidity = data.main.humidity;
             var wind = data.wind.speed;
@@ -58,7 +104,7 @@ var handleSearch = function(event) {
             var lon = data.coord.lon;
             var lat = data.coord.lat;
             var fivedayAPI = 'https://api.openweathermap.org/data/2.5/forecast?lat='+lat+'&lon='+lon+'&appid=e7ef61c6ce67516bc22001eacd3518fd&units=imperial'
-            console.log(fivedayAPI)
+            // console.log(fivedayAPI)
             // console.log(temp);
             // console.log(humidity);
             // console.log(wind);
@@ -70,7 +116,7 @@ var handleSearch = function(event) {
             var displayWind = document.createElement('li');
             var displayHumid= document.createElement('li');
 
-            cityHead.className = 'card-header m-3';
+            // cityHead.className = 'card-header m-3';
             weatherList.className = '';
             displayHumid.className = 'list-group-item m-2 humidity-display';
             displayTemp.className = 'list-group-item m-2 temp-display';
@@ -97,16 +143,17 @@ var handleSearch = function(event) {
 
         })
         .then(function(data){
-            console.log(data.list);
+            // console.log(data.list);
+            
             for (var i = 0; i < data.list.length; i+=8) {
-                console.log(data.list[i])
+                // console.log(data.list[i])
                 var date = data.list[i].dt * 1000
                 var formattedDate = dayjs(date).format("MMM D")
-                console.log (formattedDate)
+                // console.log (formattedDate)
                 var temp = data.list[i].main.temp;
                 var humid = data.list[i].main.humidity;
                 var wind = data.list[i].wind.speed;
-                console.log (temp , humid , wind)
+                // console.log (temp , humid , wind)
 
                 // var header = document.createElement('h3');
                 var cardEl = document.createElement('div');
@@ -141,13 +188,22 @@ var handleSearch = function(event) {
                 
     
             }
-
+            forcastHeader.textContent = "5-Day Forecast";
 
         })
 };
 
 
 
+startUp()
+searchForm.addEventListener('submit', handleSearchSubmit)
+searchHistory.addEventListener('click', function(e) {
+    var buttonSearch = e.target.textContent
+    if (!e.target.matches(".added-city-button") ) {
+        return
+    }
+    handleSearch(buttonSearch)
+} 
 
-searchForm.addEventListener('submit', handleSearch)
+);
 
